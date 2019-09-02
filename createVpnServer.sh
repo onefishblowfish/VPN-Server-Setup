@@ -105,7 +105,8 @@ installOpenVpnAndEasyRsaArch(){
 }
 
 # Install OpenVPN and EasyRSA for FreeBSD
-	
+installOpenVpnAndEasyEsaBsd(){
+
 	# Update package list to pick up new repository's package informatiion
 	pkg update
 
@@ -117,7 +118,8 @@ installOpenVpnAndEasyRsaArch(){
 
 	# Change to the setup directory
 	cd $setupDirectory
-	
+}
+
 # Configure the EasyRSA Variables and Build the Certificate Authority
 configureEasyRsaAndBuildTheCa(){
 
