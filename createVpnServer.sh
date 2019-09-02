@@ -7,6 +7,12 @@
 # Manjaro   
 # 
 
+# Check that the script is being run with root privileges
+if [ "$EUID" -ne 0 ]; then
+	echo "Please run with root privileges"
+	exit 1
+fi
+
 # Set the setup directory
 setupDirectory=~/openvpn-ca
 
