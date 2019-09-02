@@ -33,14 +33,67 @@ checkOperatingSystem(){
 	OS = $(echo $OS | cut -d ' ' -f)
 }
 
-# Install OpenVPN and EasyRSA
-installOpenVpnAndEasyRsa(){
+# Install OpenVPN and EasyRSA for Debian and Debian-like operating systems
+installOpenVpnAndEasyRsaDebian(){
 
 	# Update package list to pick up new repository's package information
 	apt update
 
 	# Install openvpn
 	apt install -y openvpn easy-rsa
+
+	# Create the setup directory
+	make-cadir $setupDirectory
+
+	# Change to the setup directory
+	cd $setupDirectory
+}
+
+# Install OpenVPN and EasyRSA for Fedora and Fedora-like operating systems
+installOpenVpnAndEasyFedora(){
+
+	# CentOS requires the Extra Packages for Enterprise Linux repository for the openvpn and easy-rsa packages
+	if [ "$ID" = "centos" ]; then
+		yum install -y epel-release
+	fi
+
+	# Update package list to pick up new repository's package information
+	yum check-update
+
+	# Install openvpn
+	yum install -y openvpn easy-rsa
+
+	# Create the setup directory
+	make-cadir $setupDirectory
+
+	# Change to the setup directory
+	cd $setupDirectory
+}
+
+# Install OpenVPN and EasyRSA for SUSE and openSUSE operating systems
+installOpenVpnAndEasyRsaSuse(){
+
+	# Update package list to pick up new repository's package information
+	zypper refresh
+
+	# Install openvpn
+	zypper install -y openvpn easy-rsa
+
+	# Create the setup directory
+	make-cadir $setupDirectory
+
+	# Change to the setup directory
+	cd $setupDirectory
+}
+
+# Install OpenVPN and EasyRSA for Arch and Arch-like operating systems
+installOpenVpnAndEasyRsaArch(){
+
+	# Update package list to pick up new repository's package information
+	pacman -Sy
+
+	# Install openvpn
+	pacman -S --noconfirm openvpn easy-rsa
 
 	# Create the setup directory
 	make-cadir $setupDirectory
