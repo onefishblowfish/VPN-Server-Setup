@@ -220,7 +220,7 @@ startAndEnableTheOpenVpnServiceLinux(){
 }
 
 # Start and Enable the OpenVPN Service on FreeBSD
-startAndEnableTheOpenVpnServiceBsd(){
+startAndEnableTheOpenVpnServiceFreeBsd(){
 	# Start openvpn service
 	service start openvpn
 
@@ -343,13 +343,22 @@ elif [ "OS" = "arch" ]; then
 else
 	echo "Unsupported or unrecognized operating system. You're on your own!"
 	exit 1
+fi
 
 configureEasyRsaAndBuildTheCa
 createServerCertificateKeyAndEncryptionFiles
 generateClientCertificateAndKeyPair
 configureTheOpenVpnService
 adjustTheServerNetworkingConfiguration
-startAndEnableTheOpenVpnService
+
+if [ $(uname -s) = "Linux" ]; then
+	startAndEnableTheOpenVpnServiceLinux
+elif [ $(uname -s) = "FreeBSD" ]; then
+	startAndEnableTheOpenVpnServiceFreeBsd
+else
+	echo "Unsupported or unrecognized operating system. You're on your own!"
+fi
+
 createDirectoryStructureToStoreFiles
 generateClientConfigurationFile
 
