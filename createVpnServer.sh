@@ -39,17 +39,17 @@ checkOperatingSystem(){
 # Install OpenVPN and EasyRSA
 installOpenVpnAndEasyRsa(){
 	# Debian and Debian-like operating systems
-	if [ "$OS" = "debian" ]; then
+	if [ "$OS" == "debian" ]; then
 		# Update package list to pick up new repository's package information
 		apt update
 		# Install openvpn
 		apt install -y openvpn easy-rsa
 	
 	# Fedora and Fedora-like operating systems
-	elif [ "$OS" = "fedora" ]; then
+	elif [ "$OS" == "fedora" ] || [ "$OS" = "rhel" ]; then
 		
 		# CentOS requires the Extra Packages for Enterprise Linux repository for the openvpn and easy-rsa packages 
-		if [ "$ID" = "centos" ]; then
+		if [ "$ID" == "centos" ]; then
 			yum install -y epel-release
 		fi
 		# Update package list to pick up new repository's package information
@@ -58,21 +58,21 @@ installOpenVpnAndEasyRsa(){
 		yum install -y openvpn easy-rsa
 
 	# SUSE and openSUSE
-	elif [ "$OS" = "suse" ]; then
+	elif [ "$OS" == "suse" ]; then
 		# Update package list to pick up new repository's package information
 		zypper refresh
 		# Install openvpn
 		zypper install -y openvpn easy-rsa
 
 	# Arch and Arch-like
-	elif [ "$OS" = "arch" ]; then
+	elif [ "$OS" == "arch" ]; then
 		# Update package list to pick up new repository's package information
 		pacman -Sy
 		# Install openvpn
 		pacman -S --noconfirm openvpn easy-rsa
 
 	# FreeBSD
-	elif [ "$OS" = "freebsd" ]; then
+	elif [ "$OS" == "freebsd" ]; then
 		# Update package list to pick up new repository's package informatiion
 		pkg update 
 		# Install openvpn
