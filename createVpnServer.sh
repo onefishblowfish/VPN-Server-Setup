@@ -206,8 +206,8 @@ adjustTheServerNetworkingConfiguration(){
 	sysctl -p
 }
 
-# Start and Enable the OpenVPN Service
-startAndEnableTheOpenVpnService(){
+# Start and Enable the OpenVPN Service on Linux
+startAndEnableTheOpenVpnServiceLinux(){
 
 	# Config file has the word server in it so use that in the command /etc/openvpn/server.conf
 	systemctl start openvpn@server
@@ -217,6 +217,16 @@ startAndEnableTheOpenVpnService(){
 
 	# Enable on boot
 	systemctl enable openvpn@server
+}
+
+# Start and Enable the OpenVPN Service on FreeBSD
+startAndEnableTheOpenVpnServiceBsd(){
+	# Start openvpn service
+	service start openvpn
+
+	# Enable openvpn to start on boot as a tun device
+	sysrc openvpn_enable="YES"
+	sysrc openvpn_if="tun"
 }
 
 # Create the Client Configuration Infrastructure
