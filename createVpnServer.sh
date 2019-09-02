@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Creates an OpenVPN Server. Tested on:
 # Ubuntu 16.04 and Ubuntu 18.04
@@ -33,7 +33,7 @@ checkOperatingSystem(){
 		OS=$(uname -s)
 	fi
 	# Some operating systems have multiple "ID_LIKE" entries in os-release. Include only the first one, and then convert from uppercase to lower case for uname -s
-	OS = $(echo $OS | cut -d ' ' -f | tr '[:upper:]' '[:lower:]')
+	OS=$(echo $OS | cut -d ' ' -f 1 | tr '[:upper:]' '[:lower:]')
 }
 
 # Install OpenVPN and EasyRSA
@@ -58,7 +58,7 @@ installOpenVpnAndEasyRsa(){
 		yum install -y openvpn easy-rsa
 
 	# SUSE and openSUSE
-	elif [ "$OS" = "suse"]; then
+	elif [ "$OS" = "suse" ]; then
 		# Update package list to pick up new repository's package information
 		zypper refresh
 		# Install openvpn
@@ -71,12 +71,14 @@ installOpenVpnAndEasyRsa(){
 		# Install openvpn
 		pacman -S --noconfirm openvpn easy-rsa
 
-	elif [ "$OS" = "freebsd"]; then
+	# FreeBSD
+	elif [ "$OS" = "freebsd" ]; then
 		# Update package list to pick up new repository's package informatiion
-		pkg update
+		pkg update 
 		# Install openvpn
 		pkg install -y openvpn easy-rsa	
 
+	# Only tested on Debian, Ubuntu, Fedora, RHEL, CentOS, Arch, Manjaro, and FreeBSD
 	else
 		echo "Unknown or unsupported operating system. You're on your own!"
 		exit 1
@@ -301,6 +303,7 @@ enableIptables(){
 	iptables -A OUTPUT -o tun+ -j ACCEPT
 }
 
+checkOperatingSystem
 installOpenVpnAndEasyRsa
 configureEasyRsaAndBuildTheCa
 createServerCertificateKeyAndEncryptionFiles
