@@ -1,9 +1,31 @@
 #! /bin/bash
 
-# Creates an OpenVPN Server. Tested on Ubuntu 16.04 and Ubuntu 18.04
+# Creates an OpenVPN Server. Tested on:
+# Ubuntu 16.04 and Ubuntu 18.04
+# Debian 8, Debian 9, and Debian 10
+# Arch
+# Manjaro   
+# 
 
 # Set the setup directory
 setupDirectory=~/openvpn-ca
+
+# Check the OS version
+checkOperatingSystem(){
+	if [ -f /etc/os-release ]; then
+		# Modern versions of Debian, Ubuntu, CentOS, RHEL, and openSUSE all use /etc/os-release
+		. /etc/os-release
+		if grep -q "ID_LIKE" /etc/os-release; then
+			OS=$ID_LIKE
+		else
+			OS=$ID
+		fi
+	else
+		# Fallback for BSD
+		OS=$(uname -s)
+	fi
+	OS = $(echo $OS | cut -d ' ' -f)
+}
 
 # Install OpenVPN and EasyRSA
 installOpenVpnAndEasyRsa(){
