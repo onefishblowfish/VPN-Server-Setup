@@ -21,7 +21,7 @@ setupDirectory=~/openvpn-ca
 # Check the OS version
 checkOperatingSystem(){
 	if [ -f /etc/os-release ]; then
-		# Modern versions of Debian, Ubuntu, CentOS, RHEL, and openSUSE all use /etc/os-release
+		# Versions of Linux running systemd all use /etc/os-release to identify
 		. /etc/os-release
 		if grep -q "ID_LIKE" /etc/os-release; then
 			OS=$ID_LIKE
