@@ -32,86 +32,55 @@ checkOperatingSystem(){
 		# Fallback for BSD
 		OS=$(uname -s)
 	fi
-	OS = $(echo $OS | cut -d ' ' -f)
+	# Some operating systems have multiple "ID_LIKE" entries in os-release. Include only the first one, and then convert from uppercase to lower case for uname -s
+	OS = $(echo $OS | cut -d ' ' -f | tr '[:upper:]' '[:lower:]')
 }
 
-# Install OpenVPN and EasyRSA for Debian and Debian-like operating systems
-installOpenVpnAndEasyRsaDebian(){
+# Install OpenVPN and EasyRSA
+installOpenVpnAndEasyRsa(){
+	# Debian and Debian-like operating systems
+	if [ "$OS" = "debian" ]; then
+		# Update package list to pick up new repository's package information
+		apt update
+		# Install openvpn
+		apt install -y openvpn easy-rsa
+	
+	# Fedora and Fedora-like operating systems
+	elif [ "$OS" = "fedora" ]; then
+		
+		# CentOS requires the Extra Packages for Enterprise Linux repository for the openvpn and easy-rsa packages 
+		if [ "$ID" = "centos" ]; then
+			yum install -y epel-release
+		fi
+		# Update package list to pick up new repository's package information
+		yum check-update
+		# Install openvpn
+		yum install -y openvpn easy-rsa
 
-	# Update package list to pick up new repository's package information
-	apt update
+	# SUSE and openSUSE
+	elif [ "$OS" = "suse"]; then
+		# Update package list to pick up new repository's package information
+		zypper refresh
+		# Install openvpn
+		zypper install -y openvpn easy-rsa
 
-	# Install openvpn
-	apt install -y openvpn easy-rsa
+	# Arch and Arch-like
+	elif [ "$OS" = "arch" ]; then
+		# Update package list to pick up new repository's package information
+		pacman -Sy
+		# Install openvpn
+		pacman -S --noconfirm openvpn easy-rsa
 
-	# Create the setup directory
-	make-cadir $setupDirectory
+	elif [ "$OS" = "freebsd"]; then
+		# Update package list to pick up new repository's package informatiion
+		pkg update
+		# Install openvpn
+		pkg install -y openvpn easy-rsa	
 
-	# Change to the setup directory
-	cd $setupDirectory
-}
-
-# Install OpenVPN and EasyRSA for Fedora and Fedora-like operating systems
-installOpenVpnAndEasyFedora(){
-
-	# CentOS requires the Extra Packages for Enterprise Linux repository for the openvpn and easy-rsa packages
-	if [ "$ID" = "centos" ]; then
-		yum install -y epel-release
+	else
+		echo "Unknown or unsupported operating system. You're on your own!"
+		exit 1
 	fi
-
-	# Update package list to pick up new repository's package information
-	yum check-update
-
-	# Install openvpn
-	yum install -y openvpn easy-rsa
-
-	# Create the setup directory
-	make-cadir $setupDirectory
-
-	# Change to the setup directory
-	cd $setupDirectory
-}
-
-# Install OpenVPN and EasyRSA for SUSE and openSUSE operating systems
-installOpenVpnAndEasyRsaSuse(){
-
-	# Update package list to pick up new repository's package information
-	zypper refresh
-
-	# Install openvpn
-	zypper install -y openvpn easy-rsa
-
-	# Create the setup directory
-	make-cadir $setupDirectory
-
-	# Change to the setup directory
-	cd $setupDirectory
-}
-
-# Install OpenVPN and EasyRSA for Arch and Arch-like operating systems
-installOpenVpnAndEasyRsaArch(){
-
-	# Update package list to pick up new repository's package information
-	pacman -Sy
-
-	# Install openvpn
-	pacman -S --noconfirm openvpn easy-rsa
-
-	# Create the setup directory
-	make-cadir $setupDirectory
-
-	# Change to the setup directory
-	cd $setupDirectory
-}
-
-# Install OpenVPN and EasyRSA for FreeBSD
-installOpenVpnAndEasyEsaBsd(){
-
-	# Update package list to pick up new repository's package informatiion
-	pkg update
-
-	# Install openvpn
-	pkg install -y openvpn easy-rsa
 
 	# Create the setup directory
 	make-cadir $setupDirectory
@@ -332,19 +301,7 @@ enableIptables(){
 	iptables -A OUTPUT -o tun+ -j ACCEPT
 }
 
-if [ "OS" = "debian" ]; then
-	installOpenVpnAndEasyRsaDebian
-elif [ "OS" = "fedora" ]; then
-	installOpenVpnAndEasyFedora
-elif [ "OS" = "suse" ]; then
-	installOpenVpnAndEasyRsaSuse
-elif [ "OS" = "arch" ]; then
-	installOpenVpnAndEasyRsaArch
-else
-	echo "Unsupported or unrecognized operating system. You're on your own!"
-	exit 1
-fi
-
+installOpenVpnAndEasyRsa
 configureEasyRsaAndBuildTheCa
 createServerCertificateKeyAndEncryptionFiles
 generateClientCertificateAndKeyPair
