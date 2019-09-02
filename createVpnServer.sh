@@ -4,8 +4,10 @@
 # Ubuntu 16.04 and Ubuntu 18.04
 # Debian 8, Debian 9, and Debian 10
 # Arch
-# Manjaro   
-# 
+# Manjaro 18.0.4
+# SUSE 15
+# openSUSE
+# FreeBSD
 
 # Check that the script is being run with root privileges
 if [ "$EUID" -ne 0 ]; then
@@ -102,6 +104,20 @@ installOpenVpnAndEasyRsaArch(){
 	cd $setupDirectory
 }
 
+# Install OpenVPN and EasyRSA for FreeBSD
+	
+	# Update package list to pick up new repository's package informatiion
+	pkg update
+
+	# Install openvpn
+	pkg install -y openvpn easy-rsa
+
+	# Create the setup directory
+	make-cadir $setupDirectory
+
+	# Change to the setup directory
+	cd $setupDirectory
+	
 # Configure the EasyRSA Variables and Build the Certificate Authority
 configureEasyRsaAndBuildTheCa(){
 
@@ -304,7 +320,18 @@ enableIptables(){
 	iptables -A OUTPUT -o tun+ -j ACCEPT
 }
 
-installOpenVpnAndEasyRsa
+if [ "OS" = "debian" ]; then
+	installOpenVpnAndEasyRsaDebian
+elif [ "OS" = "fedora" ]; then
+	installOpenVpnAndEasyFedora
+elif [ "OS" = "suse" ]; then
+	installOpenVpnAndEasyRsaSuse
+elif [ "OS" = "arch" ]; then
+	installOpenVpnAndEasyRsaArch
+else
+	echo "Unsupported or unrecognized operating system. You're on your own!"
+	exit 1
+
 configureEasyRsaAndBuildTheCa
 createServerCertificateKeyAndEncryptionFiles
 generateClientCertificateAndKeyPair
