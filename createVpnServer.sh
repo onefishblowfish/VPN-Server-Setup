@@ -206,8 +206,16 @@ createDirectoryStructureToStoreFiles(){
 	# Create a directory structure within your home directory to store the files
 	mkdir -p $setupDirectory/client-configs/files
 
+	# Each distro uses a different directory structure for its example configs
 	# Copy an example client configuration into the directory to use as a base configuration
-	cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf $setupDirectory/client-configs/base.conf
+	
+	# Debian and Debian-like
+	if [ "$OS" == "debian" ]; then
+		cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf $setupDirectory/client-configs/base.conf
+	# Fedora and fedora-like
+	elif [ "$OS" == "fedora" ] | [ "$OS" == "rhel" ]; then
+		cp /usr/share/doc/openvpn-*/sample/sample-config-files/server.conf /etc/openvpn/base.conf
+
 
 	# Get the server's IP address
 	ip=$(hostname -I | cut -d " " -f 1)
