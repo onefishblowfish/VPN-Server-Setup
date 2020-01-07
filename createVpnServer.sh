@@ -218,7 +218,7 @@ createDirectoryStructureToStoreFiles(){
 
 
 	# Get the server's IP address
-	ip=$(hostname -I | cut -d " " -f 1)
+	ip=$(wget -qO- https://ipinfo.io/ip)
 
 	# Set the server's IP in the config file
 	sed -i "s/remote my-server-1 1194/remote $ip 1194/g" $setupDirectory/client-configs/base.conf
