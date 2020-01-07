@@ -215,7 +215,7 @@ createDirectoryStructureToStoreFiles(){
 	# Fedora and fedora-like
 	elif [ "$OS" == "fedora" ] | [ "$OS" == "rhel" ]; then
 		cp /usr/share/doc/openvpn-*/sample/sample-config-files/server.conf /etc/openvpn/base.conf
-
+	fi
 
 	# Get the server's IP address
 	ip=$(wget -qO- https://ipinfo.io/ip)
